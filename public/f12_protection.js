@@ -1,9 +1,24 @@
-// F12 Protection Script - Prevent Developer Tools (Allow Copy)
+// F12 Protection Script - Allow right-click on cards and admin page
 (function() {
   'use strict';
   
-  // Disable right-click (but allow copy operations)
+  // Allow right-click on specific elements (cards and admin page)
   document.addEventListener('contextmenu', function(e) {
+    // Check if click is inside a card or admin page
+    const isCard = e.target.closest('[class*="card"]') || 
+                   e.target.closest('[class*="Card"]') ||
+                   e.target.closest('[data-card]');
+    
+    const isAdminPage = window.location.pathname.includes('/admin') ||
+                        document.querySelector('[data-admin-page]') ||
+                        e.target.closest('[class*="admin"]');
+    
+    // Allow right-click on cards and admin page
+    if (isCard || isAdminPage) {
+      return true; // Allow context menu
+    }
+    
+    // Block right-click everywhere else
     e.preventDefault();
     return false;
   });
@@ -41,7 +56,6 @@
     }
     
     // NOTE: Ctrl+C (Copy) is NOT blocked - users can copy text normally
-    // NOTE: Ctrl+S (Save) is also allowed now for better UX
   });
 
   // Detect DevTools
