@@ -1,14 +1,14 @@
-// F12 Protection Script - Prevent Developer Tools
+// F12 Protection Script - Prevent Developer Tools (Allow Copy)
 (function() {
   'use strict';
   
-  // Disable right-click
+  // Disable right-click (but allow copy operations)
   document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
     return false;
   });
 
-  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, but ALLOW Ctrl+C (Copy)
   document.addEventListener('keydown', function(e) {
     // F12
     if (e.key === 'F12' || e.keyCode === 123) {
@@ -40,11 +40,8 @@
       return false;
     }
     
-    // Ctrl+S (Save)
-    if (e.ctrlKey && (e.key === 'S' || e.keyCode === 83)) {
-      e.preventDefault();
-      return false;
-    }
+    // NOTE: Ctrl+C (Copy) is NOT blocked - users can copy text normally
+    // NOTE: Ctrl+S (Save) is also allowed now for better UX
   });
 
   // Detect DevTools
@@ -54,7 +51,7 @@
   const emitEvent = (isOpen, orientation) => {
     if (isOpen) {
       // Redirect or show warning
-      document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;font-size:24px;font-family:Arial;">⚠️ Developer Tools are not allowed!</div>';
+      document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;font-size:24px;font-family:Arial;color:#fff;background:#1a1a1a;">⚠️ Developer Tools are not allowed!</div>';
     }
   };
 
