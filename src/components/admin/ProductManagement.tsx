@@ -24,6 +24,7 @@ interface Product {
   category: string | null;
   is_active: boolean;
   sort_order: number;
+  purchase_limit: number | null;
 }
 
 interface ProductOption {
@@ -61,6 +62,7 @@ const ProductManagement = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [category, setCategory] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [purchaseLimit, setPurchaseLimit] = useState("");
   
   // Option form states
   const [optionName, setOptionName] = useState("");
@@ -110,6 +112,7 @@ const ProductManagement = () => {
       image_url: imageUrl.trim() || null,
       category: category.trim() || null,
       is_active: isActive,
+      purchase_limit: purchaseLimit ? parseInt(purchaseLimit) : null,
     };
 
     if (editingProduct) {
@@ -243,6 +246,7 @@ const ProductManagement = () => {
     setImageUrl("");
     setCategory("");
     setIsActive(true);
+    setPurchaseLimit("");
     setEditingProduct(null);
   };
 
@@ -260,6 +264,7 @@ const ProductManagement = () => {
     setImageUrl(product.image_url || "");
     setCategory(product.category || "");
     setIsActive(product.is_active);
+    setPurchaseLimit(product.purchase_limit ? product.purchase_limit.toString() : "");
     setDialogOpen(true);
   };
 
@@ -353,6 +358,19 @@ const ProductManagement = () => {
                   onChange={(e) => setCategory(e.target.value)}
                   placeholder="التصنيف"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label>حد الشراء (اختياري)</Label>
+                <Input
+                  type="number"
+                  value={purchaseLimit}
+                  onChange={(e) => setPurchaseLimit(e.target.value)}
+                  placeholder="عدد مرات الشراء المسموحة لكل توكن"
+                  min="1"
+                />
+                <p className="text-xs text-muted-foreground">
+                  اترك فارغاً للسماح بعدد غير محدود من المشتريات
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <Switch checked={isActive} onCheckedChange={setIsActive} />

@@ -372,6 +372,34 @@ const Index = () => {
 
     setIsLoading(true);
 
+    // Check purchase limit
+    const { data: limitCheck, error: limitError } = await supabase
+      .rpc('check_purchase_limit', {
+        p_token_id: tokenData.id,
+        p_product_id: product.id
+      });
+
+    if (limitError) {
+      console.error('Error checking purchase limit:', limitError);
+      toast({
+        title: 'خطأ',
+        description: 'حدث خطأ في التحقق من حد الشراء',
+        variant: 'destructive',
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (limitCheck === false) {
+      toast({
+        title: 'تنبيه',
+        description: 'لقد وصلت للحد الأقصى من الشراء لهذا المنتج',
+        variant: 'destructive',
+      });
+      setIsLoading(false);
+      return;
+    }
+
     // For auto-delivery, first check if stock is available
     if (isAutoDelivery) {
       // Fetch required quantity of stock items
@@ -459,6 +487,12 @@ const Index = () => {
         [selectedOption.id]: (prev[selectedOption.id] || 0) - quantity
       }));
 
+      // Increment purchase count
+      await supabase.rpc('increment_purchase_count', {
+        p_token_id: tokenData.id,
+        p_product_id: product.id
+      });
+
       setTokenBalance(newBalance);
       setResponseMessage(combinedContent);
       setResult('success');
@@ -534,6 +568,12 @@ const Index = () => {
       product_id: product.id,
       product_option_id: selectedOption.id,
       amount: manualTotalPrice
+    });
+
+    // Increment purchase count
+    await supabase.rpc('increment_purchase_count', {
+      p_token_id: tokenData.id,
+      p_product_id: product.id
     });
 
     setTokenBalance(newBalance);
